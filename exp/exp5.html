@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Form Input Soal Pilihan Ganda</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f8f9fa;
+      padding: 20px;
+    }
+    .container {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      max-width: 600px;
+      margin: auto;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    textarea, input[type="text"], select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    button {
+      display: block;
+      width: 100%;
+      background: #007bff;
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>Form Input Soal Pilihan Ganda</h2>
+    <form id="formInput">
+
+      <!-- Form 1: Input Soal -->
+      <label for="soal">Form 1: Soal</label>
+      <textarea id="soal" name="soal" rows="4" placeholder="Contoh: Siapa presiden Indonesia pertama?"></textarea>
+
+      <!-- Form 2: Pilihan Jawaban -->
+      <label>Form 2: Pilihan Jawaban</label>
+      <input type="text" id="pilihanA" name="pilihanA" placeholder="a. ...">
+      <input type="text" id="pilihanB" name="pilihanB" placeholder="b. ...">
+      <input type="text" id="pilihanC" name="pilihanC" placeholder="c. ...">
+      <input type="text" id="pilihanD" name="pilihanD" placeholder="d. ...">
+
+      <!-- Form 3: Jawaban Benar -->
+      <label for="jawabanBenar">Form 3: Jawaban Benar</label>
+      <select id="jawabanBenar" name="jawabanBenar">
+        <option value="">-- Pilih Jawaban Benar --</option>
+        <option value="a">a</option>
+        <option value="b">b</option>
+        <option value="c">c</option>
+        <option value="d">d</option>
+      </select>
+
+      <button type="button" onclick="tampilkanSoal()">Tampilkan Soal</button>
+    </form>
+
+    <!-- Area hasil tampil -->
+    <div id="hasil" style="margin-top: 30px;"></div>
+  </div>
+
+  <script>
+    function tampilkanSoal() {
+      const soal = document.getElementById("soal").value;
+      const a = document.getElementById("pilihanA").value;
+      const b = document.getElementById("pilihanB").value;
+      const c = document.getElementById("pilihanC").value;
+      const d = document.getElementById("pilihanD").value;
+      const jawabanBenar = document.getElementById("jawabanBenar").value;
+
+      if (!soal || !a || !b || !c || !d || !jawabanBenar) {
+        alert("Harap isi semua kolom!");
+        return;
+      }
+
+      document.getElementById("hasil").innerHTML = `
+        <h3>Soal:</h3>
+        <p>${soal}</p>
+        <div>
+          <label><input type="radio" name="jawaban" value="a"> a. ${a}</label><br>
+          <label><input type="radio" name="jawaban" value="b"> b. ${b}</label><br>
+          <label><input type="radio" name="jawaban" value="c"> c. ${c}</label><br>
+          <label><input type="radio" name="jawaban" value="d"> d. ${d}</label><br>
+        </div>
+        <p style="margin-top:10px;"><b>Jawaban benar:</b> ${jawabanBenar}</p>
+      `;
+    }
+  </script>
+
+</body>
+</html>
