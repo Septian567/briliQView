@@ -13,8 +13,14 @@ TODO 12 OKTOBER 2025
 
 
 
-TODO 13 OKTOBER
-1. sesuaikan tema warna
-2. isi menu utama
-3. coba api untuk login dan register
-4. 
+TODO 14 OKTOBER
+1. buat tampilan untuk upload soal csv untuk tryout
+- nama tryout --> misal TryOut1
+- mata pelajaran --> bahasa indonesia
+- jenjang --> kelas 10 SMA
+- jumlah soal --> 50 soal
+- upload soal CSV
+2. buat tampilan untuk soal tryout yang di upload
+3. buat tampilan ketika tryout di klik
+4. buat tampilan untuk review tryout siswa
+5. buat api spesification
