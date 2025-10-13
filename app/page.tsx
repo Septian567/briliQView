@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { Menu, X, House, Brain } from "lucide-react";
+import { motion } from "framer-motion";
 
 export default function Home()
 {
@@ -25,7 +26,6 @@ export default function Home()
             className="h-full max-h-full w-auto object-contain"
           />
         </div>
-
 
         {/* Hamburger */ }
         <div className="md:hidden">
@@ -124,13 +124,54 @@ export default function Home()
         { !mobileMenuOpen && (
           <>
             { activeMenu === "home" ? (
-              <h1 className="text-2xl font-semibold text-gray-900">
-                ini halaman utama
-              </h1>
+              // === Bagian Home ===
+              <motion.div
+                className="flex flex-col md:flex-row items-center justify-between w-full gap-10"
+                initial={ { opacity: 0, y: 30 } }
+                animate={ { opacity: 1, y: 0 } }
+                transition={ { duration: 0.8 } }
+              >
+                {/* Teks kiri */ }
+                <motion.div
+                  className="md:w-1/2 text-left space-y-4"
+                  initial={ { x: -50, opacity: 0 } }
+                  animate={ { x: 0, opacity: 1 } }
+                  transition={ { delay: 0.2, duration: 0.7 } }
+                >
+                  <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 leading-tight">
+                    Belajar Pintar<br />jadi<br />Brilian!
+                  </h1>
+                  <p className="text-base sm:text-lg text-gray-700 leading-relaxed">
+                    BrilIQ nggak cuma bikin kamu paham materi, tapi ngajarin cara mikir yang tepat, menyelesaikan masalah dengan kreatif, dan bikin kecerdasanmu kepake seumur hidup. Belajar jadi fun, otak makin tajam, hidup makin brilian!
+                  </p>
+                </motion.div>
+
+                {/* Gambar kanan */ }
+                <motion.div
+                  className="md:w-1/2 flex justify-center"
+                  initial={ { x: 50, opacity: 0 } }
+                  animate={ { x: 0, opacity: 1 } }
+                  transition={ { delay: 0.4, duration: 0.7 } }
+                >
+                  <div className="rounded-2xl overflow-hidden shadow-lg">
+                    <img
+                      src="/view.PNG"
+                      alt="Gambar siswa"
+                      className="w-full max-w-md object-cover"
+                    />
+                  </div>
+                </motion.div>
+              </motion.div>
             ) : (
-              <h1 className="text-2xl font-semibold text-gray-900">
+              // === Bagian TryOut ===
+              <motion.h1
+                className="text-2xl font-semibold text-gray-900"
+                initial={ { opacity: 0, y: 20 } }
+                animate={ { opacity: 1, y: 0 } }
+                transition={ { duration: 0.6 } }
+              >
                 ini halaman TryOut
-              </h1>
+              </motion.h1>
             ) }
           </>
         ) }
