@@ -155,7 +155,7 @@ export default function Home()
                 >
                   <div className="rounded-2xl overflow-hidden shadow-lg">
                     <img
-                      src="/view.PNG"
+                      src="/view.png"
                       alt="Gambar siswa"
                       className="w-full max-w-md object-cover"
                     />
