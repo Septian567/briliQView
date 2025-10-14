@@ -14,13 +14,14 @@ TODO 12 OKTOBER 2025
 
 
 TODO 14 OKTOBER
-1. buat tampilan untuk upload soal csv untuk tryout
+1. buat tampilan untuk upload soal csv untuk tryout -- SUCCESS
 - nama tryout --> misal TryOut1
 - mata pelajaran --> bahasa indonesia
 - jenjang --> kelas 10 SMA
 - jumlah soal --> 50 soal
 - upload soal CSV
-2. buat tampilan untuk soal tryout yang di upload
+2. buat tampilan untuk soal tryout yang di upload -- SUCCESS
+3. pasang localstorage untuk daftar tryout
 3. buat tampilan ketika tryout di klik
 4. buat tampilan untuk review tryout siswa
 5. buat api spesification

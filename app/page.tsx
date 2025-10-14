@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Header from "./components/home/Header";
 import Footer from "./components/home/Footer";
+import TryOutSection from "./components/tryout/TryOutSection";
 
 export default function Home()
 {
@@ -20,9 +21,8 @@ export default function Home()
         setActiveSection={ setActiveSection }
       />
 
-      {/* Main Content — flex-1 memastikan footer tetap di bawah */ }
-      <main className="flex-1 flex items-center justify-center p-6 sm:px-20 sm:py-8 bg-white text-gray-900">
-        {/* Tampilkan isi hanya saat menu mobile tertutup */ }
+      {/* Main Content */ }
+      <main className="flex-1 flex flex-col items-center justify-center p-6 sm:px-20 sm:py-8 bg-white text-gray-900 overflow-hidden">
         { !mobileMenuOpen && (
           <AnimatePresence mode="wait">
             { activeSection === "home" && (
@@ -32,7 +32,7 @@ export default function Home()
                 animate={ { opacity: 1, y: 0 } }
                 exit={ { opacity: 0, y: -30 } }
                 transition={ { duration: 0.6 } }
-                className="flex flex-col md:flex-row items-center justify-between w-full gap-10"
+                className="flex flex-col md:flex-row items-center justify-between w-full gap-10 flex-grow"
               >
                 {/* Teks kiri */ }
                 <div className="md:w-1/2 text-left space-y-4">
@@ -60,29 +60,12 @@ export default function Home()
               </motion.div>
             ) }
 
-            { activeSection === "tryout" && (
-              <motion.div
-                key="tryout"
-                initial={ { opacity: 0, y: 30 } }
-                animate={ { opacity: 1, y: 0 } }
-                exit={ { opacity: 0, y: -30 } }
-                transition={ { duration: 0.6 } }
-                className="text-center"
-              >
-                <h1 className="text-3xl font-bold text-gray-900 mb-4">
-                  Halaman TryOut
-                </h1>
-                <p className="text-gray-700 max-w-lg mx-auto leading-relaxed">
-                  Ini adalah area TryOut kamu! Nantinya bisa diisi dengan daftar soal,
-                  leaderboard, atau fitur simulasi ujian.
-                </p>
-              </motion.div>
-            ) }
+            { activeSection === "tryout" && <TryOutSection /> }
           </AnimatePresence>
         ) }
       </main>
 
-      {/* Footer — akan selalu menempel di bawah */ }
+      {/* Footer tetap di bawah */ }
       <Footer />
     </div>
   );
