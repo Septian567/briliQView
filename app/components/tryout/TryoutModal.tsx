@@ -1,8 +1,7 @@
-"use client";
-
 import React, { Dispatch, SetStateAction } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Upload } from "lucide-react";
+import Papa from "papaparse";
 import { Tryout } from "../../hooks/tryout/useTryouts";
 
 interface TryoutModalProps
@@ -20,21 +19,40 @@ export default function TryoutModal( { isOpen, setIsOpen, onSubmit }: TryoutModa
         level: "",
         questionCount: "",
         file: null as File | null,
+        questions: [] as any[],
     } );
 
-    const handleChange = ( e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement> ) =>
+    // 🔹 fungsi untuk menghitung jumlah soal dari file CSV
+    const handleFileUpload = ( e: React.ChangeEvent<HTMLInputElement> ) =>
     {
-        const { name, value, files } = e.target as any;
-        setFormData( ( prev ) => ( {
-            ...prev,
-            [name]: files ? files[0] : value,
-        } ) );
+        const file = e.target.files?.[0];
+        if ( !file ) return;
+
+        setFormData( ( prev ) => ( { ...prev, file } ) );
+
+        Papa.parse( file, {
+            header: true,
+            complete: ( results ) =>
+            {
+                // hitung baris valid (non-empty)
+                const rows = results.data.filter( ( row: any ) => row.Question || row.question );
+                setFormData( ( prev ) => ( {
+                    ...prev,
+                    questionCount: rows.length.toString(),
+                    questions: rows, // ⬅️ simpan isi CSV
+                } ) );
+            },
+            error: ( err ) =>
+            {
+                console.error( "CSV parsing error:", err );
+            },
+        } );
     };
 
     const handleUpload = ( e: React.FormEvent ) =>
     {
         e.preventDefault();
-        if ( !formData.name || !formData.subject || !formData.level || !formData.questionCount ) return;
+        if ( !formData.name || !formData.subject || !formData.level || !formData.file ) return;
 
         const newTryout: Tryout = {
             id: Date.now(),
@@ -42,10 +60,18 @@ export default function TryoutModal( { isOpen, setIsOpen, onSubmit }: TryoutModa
             subject: formData.subject,
             level: formData.level,
             questionCount: parseInt( formData.questionCount ),
+            questions: formData.questions || [], // ⬅️ simpan soal ke Tryout
         };
 
         onSubmit( newTryout );
-        setFormData( { name: "", subject: "", level: "", questionCount: "", file: null } );
+        setFormData( {
+            name: "",
+            subject: "",
+            level: "",
+            questionCount: "",
+            file: null,
+            questions: [],
+        } );
         setIsOpen( false );
     };
 
@@ -69,33 +95,42 @@ export default function TryoutModal( { isOpen, setIsOpen, onSubmit }: TryoutModa
                         <h2 className="text-xl font-semibold mb-4 text-gray-800">Add Tryout</h2>
 
                         <form onSubmit={ handleUpload } className="space-y-4">
+                            {/* Name */ }
                             <div>
                                 <label className="block text-gray-800 font-medium mb-1">Name</label>
                                 <input
                                     name="name"
                                     value={ formData.name }
-                                    onChange={ handleChange }
-                                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                                    onChange={ ( e ) =>
+                                        setFormData( ( prev ) => ( { ...prev, name: e.target.value } ) )
+                                    }
+                                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-yellow-400"
                                 />
                             </div>
 
+                            {/* Subject */ }
                             <div>
                                 <label className="block text-gray-800 font-medium mb-1">Subject</label>
                                 <input
                                     name="subject"
                                     value={ formData.subject }
-                                    onChange={ handleChange }
-                                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                                    onChange={ ( e ) =>
+                                        setFormData( ( prev ) => ( { ...prev, subject: e.target.value } ) )
+                                    }
+                                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-yellow-400"
                                 />
                             </div>
 
+                            {/* Level */ }
                             <div>
                                 <label className="block text-gray-800 font-medium mb-1">Level</label>
                                 <select
                                     name="level"
                                     value={ formData.level }
-                                    onChange={ handleChange }
-                                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                                    onChange={ ( e ) =>
+                                        setFormData( ( prev ) => ( { ...prev, level: e.target.value } ) )
+                                    }
+                                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-yellow-400"
                                 >
                                     <option value="">Select Level</option>
                                     <option value="Elementary">Elementary</option>
@@ -104,19 +139,23 @@ export default function TryoutModal( { isOpen, setIsOpen, onSubmit }: TryoutModa
                                 </select>
                             </div>
 
+                            {/* Question Count (read-only) */ }
                             <div>
                                 <label className="block text-gray-800 font-medium mb-1">Question Count</label>
                                 <input
                                     name="questionCount"
                                     type="number"
                                     value={ formData.questionCount }
-                                    onChange={ handleChange }
-                                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                                    readOnly
+                                    className="w-full border border-gray-300 bg-gray-100 rounded-lg px-3 py-2 cursor-not-allowed"
                                 />
                             </div>
 
+                            {/* Upload CSV */ }
                             <div>
-                                <label className="block text-gray-800 font-medium mb-1">Upload Questions (CSV)</label>
+                                <label className="block text-gray-800 font-medium mb-1">
+                                    Upload Questions (CSV)
+                                </label>
                                 <label
                                     htmlFor="file"
                                     className="flex items-center justify-between border border-gray-300 rounded-lg p-2 cursor-pointer bg-gray-50 hover:bg-gray-100 transition"
@@ -134,11 +173,12 @@ export default function TryoutModal( { isOpen, setIsOpen, onSubmit }: TryoutModa
                                     name="file"
                                     type="file"
                                     accept=".csv"
-                                    onChange={ handleChange }
+                                    onChange={ handleFileUpload }
                                     className="hidden"
                                 />
                             </div>
 
+                            {/* Buttons */ }
                             <div className="flex justify-end gap-3 pt-2">
                                 <button
                                     type="button"

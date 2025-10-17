@@ -7,44 +7,52 @@ export interface Tryout
     subject: string;
     level: string;
     questionCount: number;
+    questions?: Question[];
+}
+
+export interface Question
+{
+    No: string;
+    Question: string;
+    "Option A": string;
+    "Option B": string;
+    "Option C": string;
+    "Option D": string;
+    "Correct Answer": string;
 }
 
 export function useTryouts()
 {
-    const [tryouts, setTryouts] = useState<Tryout[]>( [] );
-
-    // Load from localStorage on mount
-    useEffect( () =>
+    const [tryouts, setTryouts] = useState<Tryout[]>( () =>
     {
-        if ( typeof window === "undefined" ) return; // safety for SSR
-        const saved = localStorage.getItem( "tryouts" );
-        if ( saved )
+        if ( typeof window === "undefined" ) return [];
+
+        try
         {
-            try
-            {
-                setTryouts( JSON.parse( saved ) );
-            } catch ( e )
-            {
-                console.error( "Failed to parse tryouts from localStorage:", e );
-            }
+            const saved = localStorage.getItem( "tryouts" );
+            return saved ? JSON.parse( saved ) : [];
+        } catch ( e )
+        {
+            console.error( "Failed to load tryouts:", e );
+            return [];
         }
-    }, [] );
+    } );
 
     // Save to localStorage whenever tryouts change
     useEffect( () =>
     {
-        if ( typeof window === "undefined" ) return; // safety for SSR
+        if ( typeof window === "undefined" ) return;
         localStorage.setItem( "tryouts", JSON.stringify( tryouts ) );
     }, [tryouts] );
 
     const addTryout = ( newTryout: Tryout ) =>
     {
-        setTryouts( ( prev ) => [...prev, newTryout] );
+        setTryouts( prev => [...prev, newTryout] );
     };
 
     const removeTryout = ( id: number ) =>
     {
-        setTryouts( ( prev ) => prev.filter( ( t ) => t.id !== id ) );
+        setTryouts( prev => prev.filter( t => t.id !== id ) );
     };
 
     return { tryouts, addTryout, removeTryout };

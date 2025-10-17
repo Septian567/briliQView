@@ -1,15 +1,35 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Header from "./components/home/Header";
 import Footer from "./components/home/Footer";
 import TryOutSection from "./components/tryout/TryOutSection";
 
+const STORAGE_KEY = "activeSection";
+
 export default function Home()
 {
   const [mobileMenuOpen, setMobileMenuOpen] = useState( false );
-  const [activeSection, setActiveSection] = useState<"home" | "tryout">( "home" );
+  const [activeSection, setActiveSection] = useState<"home" | "tryout" | null>( null ); // 🟡 null dulu sampai localStorage dibaca
+
+  // 🔹 Load last active section from localStorage (before rendering)
+  useEffect( () =>
+  {
+    if ( typeof window === "undefined" ) return;
+    const saved = localStorage.getItem( STORAGE_KEY ) as "home" | "tryout" | null;
+    setActiveSection( saved === "tryout" ? "tryout" : "home" );
+  }, [] );
+
+  // 🔹 Save active section to localStorage when it changes
+  useEffect( () =>
+  {
+    if ( typeof window === "undefined" || !activeSection ) return;
+    localStorage.setItem( STORAGE_KEY, activeSection );
+  }, [activeSection] );
+
+  // 🟡 Jangan render isi halaman sampai activeSection diketahui
+  if ( activeSection === null ) return null;
 
   return (
     <div className="font-sans min-h-screen flex flex-col bg-white text-gray-900">
@@ -65,7 +85,7 @@ export default function Home()
         ) }
       </main>
 
-      {/* Footer tetap di bawah */ }
+      {/* Footer */ }
       <Footer />
     </div>
   );

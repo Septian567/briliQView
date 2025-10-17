@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { useRouter } from "next/navigation";
 import { Menu, X, House, Brain, ChevronRight } from "lucide-react";
 import NavMenu from "./NavMenu";
 
@@ -19,12 +20,17 @@ export default function Header( {
     setActiveSection,
 }: HeaderProps )
 {
+    const router = useRouter();
+
+    const handleLogin = () => router.push( "/login" );
+    const handleSignup = () => router.push( "/signup" );
+
     return (
         <header className="w-full flex flex-col bg-white border-b border-gray-200 sticky top-0 z-10">
             {/* Top bar */ }
             <div className="flex justify-between items-center h-16 sm:h-20 px-6 sm:px-12">
                 {/* Logo */ }
-                <div className="flex items-center gap-2 h-full">
+                <div className="flex items-center gap-2 h-full cursor-pointer" onClick={ () => router.push( "/" ) }>
                     <img
                         src="/a.PNG"
                         alt="BrilIQ logo"
@@ -43,17 +49,20 @@ export default function Header( {
                 </div>
 
                 {/* Desktop Menu */ }
-                <NavMenu
-                    activeSection={ activeSection }
-                    setActiveSection={ setActiveSection }
-                />
+                <NavMenu activeSection={ activeSection } setActiveSection={ setActiveSection } />
 
-                {/* Desktop Buttons (Login & Signup tetap seperti semula) */ }
+                {/* Desktop Buttons */ }
                 <div className="hidden md:flex gap-4">
-                    <button className="text-sm font-medium text-gray-700 px-3 py-1 rounded hover:bg-gray-200 transition-colors">
+                    <button
+                        onClick={ handleLogin }
+                        className="text-sm font-medium text-gray-700 px-3 py-1 rounded hover:bg-gray-200 transition-colors"
+                    >
                         Login
                     </button>
-                    <button className="text-sm font-medium bg-yellow-400 hover:bg-yellow-500 text-black px-4 py-1 rounded transition-colors">
+                    <button
+                        onClick={ handleSignup }
+                        className="text-sm font-medium bg-yellow-400 hover:bg-yellow-500 text-black px-4 py-1 rounded transition-colors"
+                    >
                         SignUp
                     </button>
                 </div>
@@ -124,12 +133,26 @@ export default function Header( {
                         </button>
                     </div>
 
-                    {/* Mobile Buttons tetap */ }
+                    {/* Mobile Buttons */ }
                     <div className="flex gap-4 px-6 py-4 border-t border-gray-100">
-                        <button className="flex-1 text-center text-black bg-yellow-400 hover:bg-yellow-500 px-4 py-2 rounded font-medium transition-colors">
+                        <button
+                            onClick={ () =>
+                            {
+                                handleLogin();
+                                setMobileMenuOpen( false );
+                            } }
+                            className="flex-1 text-center text-black bg-yellow-400 hover:bg-yellow-500 px-4 py-2 rounded font-medium transition-colors"
+                        >
                             Masuk
                         </button>
-                        <button className="flex-1 text-center text-yellow-400 border border-yellow-400 hover:bg-yellow-50 px-4 py-2 rounded font-medium transition-colors">
+                        <button
+                            onClick={ () =>
+                            {
+                                handleSignup();
+                                setMobileMenuOpen( false );
+                            } }
+                            className="flex-1 text-center text-yellow-400 border border-yellow-400 hover:bg-yellow-50 px-4 py-2 rounded font-medium transition-colors"
+                        >
                             Daftar
                         </button>
                     </div>

@@ -21,7 +21,13 @@ TODO 14 OKTOBER
 - jumlah soal --> 50 soal
 - upload soal CSV
 2. buat tampilan untuk soal tryout yang di upload -- SUCCESS
-3. pasang localstorage untuk daftar tryout
-3. buat tampilan ketika tryout di klik
-4. buat tampilan untuk review tryout siswa
-5. buat api spesification
+
+
+TODO 16 OKTOBER 2025
+1. pasang localstorage untuk daftar tryout -- SUCCESS
+2. buat tampilan ketika tryout di klik -- SUCCESS
+
+TODO 17 OKTOBER 2025
+1. buat tampilan tryout yang lebih baik (25 menit)
+2. buat tampilan untuk review tryout siswa
+3. buat api spesification
