@@ -28,7 +28,6 @@ export default function TryoutReview( {
     const questions = tryout.questions || [];
     const total = questions.length;
 
-    // Format tanggal
     const formattedDate = new Date( date ).toLocaleString( "id-ID", {
         day: "2-digit",
         month: "short",
@@ -44,16 +43,17 @@ export default function TryoutReview( {
             {/* Sidebar */ }
             <div className="w-full md:w-1/4 border-b md:border-b-0 md:border-r border-gray-200 p-6 flex flex-col relative">
                 {/* Judul dan ikon mobile */ }
-                <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-lg font-semibold">Hasil Tryout</h2>
+                <div className="flex items-center mb-4 gap-2">
+                    {/* Tombol Kembali mobile */ }
+                    <button
+                        onClick={ onExit }
+                        title="Kembali"
+                        className="p-1 text-black hover:text-gray-700 md:hidden"
+                    >
+                        <ArrowLeft className="w-5 h-5" />
+                    </button>
+                    <h2 className="text-lg font-semibold flex-1">Hasil Tryout</h2>
                     <div className="flex gap-2 md:hidden">
-                        <button
-                            onClick={ onExit }
-                            title="Kembali"
-                            className="p-1 text-black hover:text-gray-700"
-                        >
-                            <ArrowLeft className="w-5 h-5" />
-                        </button>
                         <button
                             onClick={ () => setShowResult( !showResult ) }
                             title={ showResult ? "Sembunyikan Hasil" : "Tampilkan Hasil" }
@@ -64,7 +64,7 @@ export default function TryoutReview( {
                     </div>
                 </div>
 
-                {/* Tombol desktop tetap */ }
+                {/* Tombol desktop */ }
                 <button
                     onClick={ () => setShowResult( !showResult ) }
                     className="mb-4 px-4 py-2 bg-blue-400 hover:bg-blue-500 text-white rounded-lg font-medium hidden md:block"
@@ -78,10 +78,6 @@ export default function TryoutReview( {
                             <span className="font-medium">Tanggal Ujian:</span> { formattedDate }
                         </p>
 
-                        {/* Pesan selamat jika lulus */ }
-                       
-
-                        {/* Angka besar Total Soal & Score */ }
                         <div className="flex justify-around my-6">
                             <div className="flex flex-col items-center">
                                 <p className="text-lg font-medium">Total Soal</p>
@@ -108,7 +104,6 @@ export default function TryoutReview( {
                         ) }
                     </div>
                 ) }
-
 
                 {/* Tombol Kembali desktop */ }
                 <button
@@ -166,10 +161,8 @@ export default function TryoutReview( {
                     } ) }
                 </div>
 
-                {/* Spacer tambahan agar soal terakhir terlihat penuh */ }
                 <div className="h-24 md:h-0" />
             </div>
-
         </div>
     );
 }
