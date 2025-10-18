@@ -4,8 +4,8 @@ import React from "react";
 
 interface NavMenuProps
 {
-    activeSection: "home" | "tryout";
-    setActiveSection: React.Dispatch<React.SetStateAction<"home" | "tryout">>;
+    activeSection: "home" | "tryout" | null;
+    setActiveSection: React.Dispatch<React.SetStateAction<"home" | "tryout" | null>>;
 }
 
 export default function NavMenu( { activeSection, setActiveSection }: NavMenuProps )

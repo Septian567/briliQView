@@ -10,7 +10,7 @@ interface HeaderProps
     mobileMenuOpen: boolean;
     setMobileMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
     activeSection: "home" | "tryout";
-    setActiveSection: React.Dispatch<React.SetStateAction<"home" | "tryout">>;
+    setActiveSection: React.Dispatch<React.SetStateAction<"home" | "tryout" | null>>;
 }
 
 export default function Header( {

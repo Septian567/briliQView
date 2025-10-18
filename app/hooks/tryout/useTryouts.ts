@@ -1,15 +1,5 @@
 import { useState, useEffect } from "react";
 
-export interface Tryout
-{
-    id: number;
-    name: string;
-    subject: string;
-    level: string;
-    questionCount: number;
-    questions?: Question[];
-}
-
 export interface Question
 {
     No: string;
@@ -19,6 +9,17 @@ export interface Question
     "Option C": string;
     "Option D": string;
     "Correct Answer": string;
+}
+
+export interface Tryout
+{
+    id: string; // ✅ ubah dari number → string
+    name: string;
+    subject: string;
+    level: string;
+    questionCount: number;
+    questions?: Question[];
+    duration?: number;
 }
 
 export function useTryouts()
@@ -50,7 +51,7 @@ export function useTryouts()
         setTryouts( prev => [...prev, newTryout] );
     };
 
-    const removeTryout = ( id: number ) =>
+    const removeTryout = ( id: string ) =>
     {
         setTryouts( prev => prev.filter( t => t.id !== id ) );
     };
