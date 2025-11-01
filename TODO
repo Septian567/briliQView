@@ -38,16 +38,23 @@ TODO 18 OKTOBER 2025
 - pastikan riwayat ujian sesuai -- SUCCESS
 - buat tampilan preview lebih baik -- SUCCESS
 - sesuaikan halaman pelaksanaan tryout dengan tampilan mobile -- SUCCESS
-- perbaiki halaman review ujian dengan tampilan yang lebih sesuai
+- perbaiki halaman review ujian dengan tampilan yang lebih sesuai -- SUCCESS
 
 
+TODO 19 OKTOBER 2025
+1. perbaiki ivalid date -- SUCCESS
+2. hubungkan api ke frontend
 
 
+TODO 23 OKTOBER 2025
+1. perbaiki tampilan course -- SUCCESS
+2. tampilan course mobile  -- SUCCESS
+3. seragamkan tampilan course -- SUCCESS
+4. perbaiki daftar tryout mobile -- SUCCESS
+5. pindahkan keterangan belum ada course ke tengah
+- refactoring agar pesan saat konten kosong jadi komponen reusable terpisah
 
 
-
-
-
-
-
-5. buat api spesification
+TODO 01 NOVEMBER 2025
+1. tambah fitur edit tryout -- SUCCESS
+2. refactoring kode tryout  -- SUCCESS

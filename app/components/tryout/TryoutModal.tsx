@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction } from "react";
+import React, { Dispatch, SetStateAction, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Upload } from "lucide-react";
 import Papa from "papaparse";
@@ -9,35 +9,68 @@ interface TryoutModalProps
     isOpen: boolean;
     setIsOpen: Dispatch<SetStateAction<boolean>>;
     onSubmit: ( tryout: Tryout ) => void;
+    editData?: Tryout | null;
 }
 
-export default function TryoutModal( { isOpen, setIsOpen, onSubmit }: TryoutModalProps )
+export default function TryoutModal( {
+    isOpen,
+    setIsOpen,
+    onSubmit,
+    editData,
+}: TryoutModalProps )
 {
     const [formData, setFormData] = React.useState( {
         name: "",
         subject: "",
         level: "",
-        duration: "", // ⏱️ waktu dalam menit
+        duration: "",
         questionCount: "",
         file: null as File | null,
         questions: [] as any[],
     } );
 
+    // Prefill form saat edit mode
+    useEffect( () =>
+    {
+        if ( editData )
+        {
+            setFormData( {
+                name: editData.name,
+                subject: editData.subject,
+                level: editData.level,
+                duration: editData.duration?.toString() || "",
+                questionCount: editData.questionCount.toString(),
+                file: null,
+                questions: editData.questions || [],
+            } );
+        } else
+        {
+            // reset jika tidak ada editData
+            setFormData( {
+                name: "",
+                subject: "",
+                level: "",
+                duration: "",
+                questionCount: "",
+                file: null,
+                questions: [],
+            } );
+        }
+    }, [editData] );
 
     const handleFileUpload = ( e: React.ChangeEvent<HTMLInputElement> ) =>
     {
         const file = e.target.files?.[0];
         if ( !file ) return;
 
-        setFormData( prev => ( { ...prev, file } ) );
+        setFormData( ( prev ) => ( { ...prev, file } ) );
 
-        // ✅ Pakai any untuk config supaya TS tidak error
         Papa.parse( file, {
             header: true,
             complete: ( results: any ) =>
             {
                 const rows = results.data.filter( ( row: any ) => row.Question || row.question );
-                setFormData( prev => ( {
+                setFormData( ( prev ) => ( {
                     ...prev,
                     questionCount: rows.length.toString(),
                     questions: rows,
@@ -47,12 +80,10 @@ export default function TryoutModal( { isOpen, setIsOpen, onSubmit }: TryoutModa
             {
                 console.error( "CSV parsing error:", err );
             },
-        } as any ); // <-- paksa TS menerima config
+        } as any );
     };
 
-
-
-    // 🔹 Submit form
+    // Handle submit (Add / Edit)
     const handleUpload = ( e: React.FormEvent ) =>
     {
         e.preventDefault();
@@ -60,19 +91,18 @@ export default function TryoutModal( { isOpen, setIsOpen, onSubmit }: TryoutModa
             !formData.name ||
             !formData.subject ||
             !formData.level ||
-            !formData.duration ||
-            !formData.file
+            !formData.duration
         )
             return;
 
         const newTryout: Tryout = {
-            id: Date.now().toString(), 
+            id: editData ? editData.id : Date.now().toString(),
             name: formData.name,
             subject: formData.subject,
             level: formData.level,
-            duration: parseInt( formData.duration ), // ⏱️ simpan durasi dalam menit
-            questionCount: parseInt( formData.questionCount ),
-            questions: formData.questions || [],
+            duration: parseInt( formData.duration ),
+            questionCount: parseInt( formData.questionCount ) || 0,
+            questions: formData.questions || editData?.questions || [],
         };
 
         onSubmit( newTryout );
@@ -106,7 +136,7 @@ export default function TryoutModal( { isOpen, setIsOpen, onSubmit }: TryoutModa
                         onClick={ ( e ) => e.stopPropagation() }
                     >
                         <h2 className="text-xl font-semibold mb-4 text-gray-800">
-                            Add Tryout
+                            { editData ? "Edit Tryout" : "Add Tryout" }
                         </h2>
 
                         <form onSubmit={ handleUpload } className="space-y-4">
@@ -119,10 +149,7 @@ export default function TryoutModal( { isOpen, setIsOpen, onSubmit }: TryoutModa
                                     name="name"
                                     value={ formData.name }
                                     onChange={ ( e ) =>
-                                        setFormData( ( prev ) => ( {
-                                            ...prev,
-                                            name: e.target.value,
-                                        } ) )
+                                        setFormData( ( prev ) => ( { ...prev, name: e.target.value } ) )
                                     }
                                     className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-yellow-400"
                                 />
@@ -137,10 +164,7 @@ export default function TryoutModal( { isOpen, setIsOpen, onSubmit }: TryoutModa
                                     name="subject"
                                     value={ formData.subject }
                                     onChange={ ( e ) =>
-                                        setFormData( ( prev ) => ( {
-                                            ...prev,
-                                            subject: e.target.value,
-                                        } ) )
+                                        setFormData( ( prev ) => ( { ...prev, subject: e.target.value } ) )
                                     }
                                     className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-yellow-400"
                                 />
@@ -155,10 +179,7 @@ export default function TryoutModal( { isOpen, setIsOpen, onSubmit }: TryoutModa
                                     name="level"
                                     value={ formData.level }
                                     onChange={ ( e ) =>
-                                        setFormData( ( prev ) => ( {
-                                            ...prev,
-                                            level: e.target.value,
-                                        } ) )
+                                        setFormData( ( prev ) => ( { ...prev, level: e.target.value } ) )
                                     }
                                     className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-yellow-400"
                                 >
@@ -180,17 +201,14 @@ export default function TryoutModal( { isOpen, setIsOpen, onSubmit }: TryoutModa
                                     min="1"
                                     value={ formData.duration }
                                     onChange={ ( e ) =>
-                                        setFormData( ( prev ) => ( {
-                                            ...prev,
-                                            duration: e.target.value,
-                                        } ) )
+                                        setFormData( ( prev ) => ( { ...prev, duration: e.target.value } ) )
                                     }
                                     className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-yellow-400"
                                     placeholder="e.g. 60"
                                 />
                             </div>
 
-                            {/* Question Count (read-only) */ }
+                            {/* Question Count */ }
                             <div>
                                 <label className="block text-gray-800 font-medium mb-1">
                                     Question Count
@@ -246,7 +264,7 @@ export default function TryoutModal( { isOpen, setIsOpen, onSubmit }: TryoutModa
                                     type="submit"
                                     className="px-4 py-2 bg-yellow-400 hover:bg-yellow-500 text-black rounded-lg font-medium transition"
                                 >
-                                    Upload
+                                    { editData ? "Save Changes" : "Upload" }
                                 </button>
                             </div>
                         </form>

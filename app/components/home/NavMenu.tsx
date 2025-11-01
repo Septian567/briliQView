@@ -4,8 +4,8 @@ import React from "react";
 
 interface NavMenuProps
 {
-    activeSection: "home" | "tryout" | null;
-    setActiveSection: React.Dispatch<React.SetStateAction<"home" | "tryout" | null>>;
+    activeSection: "home" | "tryout" | "course" | null;
+    setActiveSection: React.Dispatch<React.SetStateAction<"home" | "tryout" | "course" | null>>;
 }
 
 export default function NavMenu( { activeSection, setActiveSection }: NavMenuProps )
@@ -30,6 +30,16 @@ export default function NavMenu( { activeSection, setActiveSection }: NavMenuPro
                     }` }
             >
                 TryOut
+            </button>
+
+            <button
+                onClick={ () => setActiveSection( "course" ) }
+                className={ `text-sm font-medium pb-1 inline-block transition-colors ${ activeSection === "course"
+                        ? "border-b-2 border-black text-black"
+                        : "text-gray-700 hover:text-black"
+                    }` }
+            >
+                Course
             </button>
         </nav>
     );

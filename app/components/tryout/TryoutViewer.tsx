@@ -111,7 +111,7 @@ export default function TryoutViewer( {
                     )
                 }
                 isReview={ isReview }
-                date={ date || new Date().toLocaleString() }
+                date={ date || new Date().toISOString() }
             />
         );
     }
