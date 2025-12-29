@@ -1,36 +1,11 @@
-"use client";
+import { Suspense } from "react";
+import HomeClient from "./HomeClient";
 
-import React, { useState } from "react";
-
-import Header from "./components/home/Header";
-import Footer from "./components/home/Footer";
-import LandingPage from "./components/landingPage";
-
-import { usePersistentSection } from "./hooks/landingPage/usePersistentSection";
-
-export default function Home()
+export default function Page()
 {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState( false );
-  const [activeSection, setActiveSection] =
-    usePersistentSection( "home" );
-
   return (
-    <div className="font-sans min-h-screen flex flex-col bg-white text-gray-900">
-      <Header
-        mobileMenuOpen={ mobileMenuOpen }
-        setMobileMenuOpen={ setMobileMenuOpen }
-        activeSection={ activeSection }
-        setActiveSection={ setActiveSection }
-      />
-
-      <div className="flex-1 bg-white">
-        <LandingPage
-          activeSection={ activeSection }
-          mobileMenuOpen={ mobileMenuOpen }
-        />
-      </div>
-
-      <Footer />
-    </div>
+    <Suspense fallback={ null }>
+      <HomeClient />
+    </Suspense>
   );
 }
