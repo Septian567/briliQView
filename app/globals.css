@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* ==========================================
+   🎨 Global Theme & Base
+   ========================================== */
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -23,4 +26,99 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* ==========================================
+   🧮 Quill & KaTeX Global Styling
+   ========================================== */
+
+/* Pastikan editor tidak memotong tooltip (popup) */
+.ql-container,
+.ql-editor {
+  overflow: visible !important;
+}
+
+/* Pastikan wrapper form tidak memangkas popup */
+.bg-white.p-6.rounded-xl,
+.form-editor,
+.card {
+  overflow: visible !important;
+}
+
+/* Tooltip (popup formula/link/video) agar tampil di atas segalanya */
+.ql-tooltip {
+  position: absolute !important;
+  z-index: 9999 !important;
+  white-space: nowrap;
+}
+
+/* Gaya popup saat sedang mengedit (misal menulis formula LaTeX) */
+.ql-tooltip.ql-editing {
+  background-color: #ffffff !important;
+  border: 1px solid #cbd5e1 !important; /* abu muda */
+  border-radius: 0.5rem !important; /* rounded-lg */
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12) !important;
+  padding: 0.75rem 1rem !important;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Input teks di dalam popup */
+.ql-tooltip input[type="text"] {
+  min-width: 280px !important;
+  width: auto !important;
+  border: 1px solid #94a3b8 !important;
+  border-radius: 0.375rem !important;
+  padding: 0.375rem 0.5rem !important;
+  font-size: 0.875rem !important;
+  outline: none !important;
+  color: #1e293b !important;
+  background: #fff !important;
+}
+.ql-tooltip input[type="text"]:focus {
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25);
+}
+
+/* Tombol OK / Save di popup */
+.ql-tooltip button {
+  background-color: #3b82f6 !important;
+  border: none !important;
+  color: white !important;
+  padding: 0.25rem 0.75rem !important;
+  margin-left: 0.5rem !important;
+  border-radius: 0.375rem !important;
+  cursor: pointer;
+  font-size: 0.875rem !important;
+  transition: background-color 0.2s ease;
+}
+.ql-tooltip button:hover {
+  background-color: #2563eb !important;
+}
+
+/* Rumus matematika yang sudah disisipkan di editor */
+.ql-editor .ql-formula {
+  display: inline-block;
+  padding: 2px 6px;
+  background-color: #f8fafc;
+  border-radius: 4px;
+  font-size: 1rem;
+  vertical-align: middle;
+}
+
+/* Tampilan code block agar konsisten */
+.ql-editor pre {
+  background-color: #f1f5f9;
+  border-radius: 6px;
+  padding: 0.75rem;
+  font-family: 'JetBrains Mono', monospace;
+  overflow-x: auto;
+  font-size: 0.875rem;
+  color: #1e293b;
+}
+
+/* Responsif */
+@media (max-width: 640px) {
+  .ql-tooltip input[type="text"] {
+    min-width: 200px !important;
+  }
 }

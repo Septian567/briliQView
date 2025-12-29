@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>HTML Preview + Gambar</title>
+<style>
+body { font-family: Arial; margin: 20px; }
+textarea { width: 100%; height: 150px; }
+.preview { border: 1px solid #ccc; padding: 10px; margin-top: 10px; }
+img { max-width: 100%; }
+</style>
+</head>
+<body>
+
+<h2>Input Gambar & Kode HTML</h2>
+
+<label>Pilih Gambar:</label><br>
+<input type="file" id="imageInput" accept="image/*"><br><br>
+
+<label>Kode HTML:</label><br>
+<textarea id="htmlInput" placeholder="<img id='previewImg'>"></textarea><br>
+
+<button onclick="renderHTML()">Tampilkan View</button>
+
+<h3>Preview</h3>
+<div class="preview" id="view"></div>
+
+<script>
+let imageURL = '';
+
+document.getElementById('imageInput').addEventListener('change', function () {
+    const file = this.files[0];
+    if (file) {
+        imageURL = URL.createObjectURL(file);
+    }
+});
+
+function renderHTML() {
+    let html = document.getElementById('htmlInput').value;
+
+    // otomatis ganti src gambar jika ada img tanpa src
+    html = html.replace(
+        '<img',
+        `<img src="${imageURL}"`
+    );
+
+    document.getElementById('view').innerHTML = html;
+}
+</script>
+
+</body>
+</html>

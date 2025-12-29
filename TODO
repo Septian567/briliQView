@@ -58,3 +58,70 @@ TODO 23 OKTOBER 2025
 TODO 01 NOVEMBER 2025
 1. tambah fitur edit tryout -- SUCCESS
 2. refactoring kode tryout  -- SUCCESS
+
+TODO 2 NOVEMBER 2025
+1. perbaiki tampilan course -- SUCCESS
+
+TODO 6 NOVEMBER 2025
+1. pasang fitur ketik nama untuk hapus -- SUCCESS
+
+TODO 7 November 2025
+1. sejajarkan placeholder dengan judul  -- SUCCESS
+2. rapikan daftar chapter -- SUCCESS
+3. perbaiki fitur edit chapter
+- buat saat edit, tombol edit masih di dalam tabel actionsn -- SUCCESS
+4. hilangkan garis abu-abu di bawah menu chapter -- SUCCESS
+5. sesuaikan tampilan tabel
+- perbaiki tampilan responsive tabel -- SUCCESS
+6. tambahkan shortcut untuk edit chapter
+- enter untuk simpan -- SUCCESS
+- esc untuk cancel  -- SUCCESS
+7. tambahkan tombol setting untuk menyembunyikan header -- SUCCESS
+8. perbaiki tampilan kembali ke main -- SUCCESS
+9. perbaiki tampilan dan fungsi tambah sub chapter
+- perbaiki tampilan
+- perbaiki fungsi
+
+
+TODO 6 Desember 2025
+1. ganti input form materi dengan html - FAILED
+
+TODO 13 DESEMBER 2025
+1. buat rancangan input subchapter, agar bisa upload gambar, artikel, dan simbol matematika dengan rapi
+
+TODO 14 DESEMBER 2025
+1. fungsikan tombol submit artikel -- SUCCESS
+
+TODO 15 DESEMBER 2025
+1. buat tampilan mata pelajaran saat kelas di klik -- SUCCESS
+2. tambahkan mata pelajaran dan kelas saat menambah chapter -- SUCCESS
+
+
+TODO 26 DESEMBER 2025
+1. buat landing page lengkap
+- buat sketsa -- SUCCESS
+2. Rapikan kode utama
+- pisahkan komponen dengan hook dan page.tsx -- SUCCESS
+3. pisahkan komponen kecil dari index.tsx -- SUCCESS
+4. buat header menu -- SUCCESS
+5. buat menu dropdown di headerMenu -- SUCCESS
+6. buat menu dropdown stabil -- SUCCESS
+
+TODO 27 DESEMBER 2025
+1. rapikan tampilan homeText -- SUCCESS
+2. buat tampilan menu layanan -- SUCCESS
+- buat tampilan dasar -- SUCCESS
+- perbaiki icon dengan lucide react -- SUCCESS
+- tambahkan menu dropdown -- SUCCESS
+3. tambahkan bagian selanjutnya -- SUCCESS
+4. tambahkan gambaran singkat materi teks dalam bentuk card
+- buat tampilan awal -- SUCCESS
+- perbaiki tampilan card -- SUCCESS
+
+
+TODO 28 DESEMBER 2025
+1. buat card menu
+- buat kerangka dasar -- SUCCESS
+- rapikan tampilan card -- SUCCESS
+2. buat komponen tombol langganan --SUCCESS
+3. buat fitur free vs premium

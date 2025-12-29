@@ -1,8 +1,8 @@
-import React, { Dispatch, SetStateAction, useEffect } from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Upload } from "lucide-react";
-import Papa from "papaparse";
-import { Tryout } from "../../hooks/tryout/useTryouts";
+import { Tryout } from "../../../hooks/tryout/useTryouts";
+import { useTryoutModal } from "../../../hooks/tryout/useTryoutModal";
 
 interface TryoutModalProps
 {
@@ -19,104 +19,11 @@ export default function TryoutModal( {
     editData,
 }: TryoutModalProps )
 {
-    const [formData, setFormData] = React.useState( {
-        name: "",
-        subject: "",
-        level: "",
-        duration: "",
-        questionCount: "",
-        file: null as File | null,
-        questions: [] as any[],
+    const { formData, setFormData, handleFileUpload, handleSubmit } = useTryoutModal( {
+        editData,
+        onSubmit,
+        closeModal: () => setIsOpen( false ),
     } );
-
-    // Prefill form saat edit mode
-    useEffect( () =>
-    {
-        if ( editData )
-        {
-            setFormData( {
-                name: editData.name,
-                subject: editData.subject,
-                level: editData.level,
-                duration: editData.duration?.toString() || "",
-                questionCount: editData.questionCount.toString(),
-                file: null,
-                questions: editData.questions || [],
-            } );
-        } else
-        {
-            // reset jika tidak ada editData
-            setFormData( {
-                name: "",
-                subject: "",
-                level: "",
-                duration: "",
-                questionCount: "",
-                file: null,
-                questions: [],
-            } );
-        }
-    }, [editData] );
-
-    const handleFileUpload = ( e: React.ChangeEvent<HTMLInputElement> ) =>
-    {
-        const file = e.target.files?.[0];
-        if ( !file ) return;
-
-        setFormData( ( prev ) => ( { ...prev, file } ) );
-
-        Papa.parse( file, {
-            header: true,
-            complete: ( results: any ) =>
-            {
-                const rows = results.data.filter( ( row: any ) => row.Question || row.question );
-                setFormData( ( prev ) => ( {
-                    ...prev,
-                    questionCount: rows.length.toString(),
-                    questions: rows,
-                } ) );
-            },
-            error: ( err: any ) =>
-            {
-                console.error( "CSV parsing error:", err );
-            },
-        } as any );
-    };
-
-    // Handle submit (Add / Edit)
-    const handleUpload = ( e: React.FormEvent ) =>
-    {
-        e.preventDefault();
-        if (
-            !formData.name ||
-            !formData.subject ||
-            !formData.level ||
-            !formData.duration
-        )
-            return;
-
-        const newTryout: Tryout = {
-            id: editData ? editData.id : Date.now().toString(),
-            name: formData.name,
-            subject: formData.subject,
-            level: formData.level,
-            duration: parseInt( formData.duration ),
-            questionCount: parseInt( formData.questionCount ) || 0,
-            questions: formData.questions || editData?.questions || [],
-        };
-
-        onSubmit( newTryout );
-        setFormData( {
-            name: "",
-            subject: "",
-            level: "",
-            duration: "",
-            questionCount: "",
-            file: null,
-            questions: [],
-        } );
-        setIsOpen( false );
-    };
 
     return (
         <AnimatePresence>
@@ -139,12 +46,10 @@ export default function TryoutModal( {
                             { editData ? "Edit Tryout" : "Add Tryout" }
                         </h2>
 
-                        <form onSubmit={ handleUpload } className="space-y-4">
+                        <form onSubmit={ handleSubmit } className="space-y-4">
                             {/* Name */ }
                             <div>
-                                <label className="block text-gray-800 font-medium mb-1">
-                                    Name
-                                </label>
+                                <label className="block text-gray-800 font-medium mb-1">Name</label>
                                 <input
                                     name="name"
                                     value={ formData.name }
@@ -157,9 +62,7 @@ export default function TryoutModal( {
 
                             {/* Subject */ }
                             <div>
-                                <label className="block text-gray-800 font-medium mb-1">
-                                    Subject
-                                </label>
+                                <label className="block text-gray-800 font-medium mb-1">Subject</label>
                                 <input
                                     name="subject"
                                     value={ formData.subject }
@@ -172,9 +75,7 @@ export default function TryoutModal( {
 
                             {/* Level */ }
                             <div>
-                                <label className="block text-gray-800 font-medium mb-1">
-                                    Level
-                                </label>
+                                <label className="block text-gray-800 font-medium mb-1">Level</label>
                                 <select
                                     name="level"
                                     value={ formData.level }
@@ -233,9 +134,7 @@ export default function TryoutModal( {
                                 >
                                     <span className="flex items-center gap-2 text-gray-700">
                                         <Upload size={ 18 } />
-                                        { formData.file
-                                            ? formData.file.name
-                                            : "Select CSV file..." }
+                                        { formData.file ? formData.file.name : "Select CSV file..." }
                                     </span>
                                     <span className="bg-yellow-400 text-black px-3 py-1 rounded font-medium hover:bg-yellow-500 transition">
                                         Browse

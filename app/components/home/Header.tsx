@@ -7,14 +7,16 @@ import NavMenu from "./NavMenu";
 import LoginButton from "./LoginButton";
 import SignupButton from "./SignupButton";
 
+type Section = "home" | "tryout" | "course";
+
 interface HeaderProps
 {
     mobileMenuOpen: boolean;
     setMobileMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
-    activeSection: "home" | "tryout" | "course";
-    setActiveSection: React.Dispatch<React.SetStateAction<"home" | "tryout" | "course" | null>>;
-
+    activeSection: Section;
+    setActiveSection: ( section: Section ) => void;
 }
+
 
 export default function Header( {
     mobileMenuOpen,

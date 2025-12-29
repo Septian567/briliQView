@@ -34,7 +34,7 @@ export default function LoginButton( { variant = "desktop", onClick }: LoginButt
     return (
         <button
             onClick={ handleClick }
-            className="text-sm font-medium text-gray-700 px-3 py-1 rounded hover:bg-gray-200 transition-colors"
+            className="text-m font-medium text-gray-700 px-3 py-1 rounded hover:bg-gray-200 transition-colors"
         >
             Login
         </button>

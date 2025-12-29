@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { Plus } from "lucide-react";
 import AddButton from "../frame/AddButton";
 import Frame from "../frame/Frame";
 import CourseList, { CourseItem } from "./CourseList";
 import CourseModal from "./CourseModal";
+import DeleteConfirmModal from "../frame/DeleteConfirmModal";
 
 const STORAGE_KEY = "courses";
 
@@ -13,8 +14,12 @@ export default function Course()
 {
     const [courses, setCourses] = useState<CourseItem[]>( [] );
     const [isModalOpen, setIsModalOpen] = useState( false );
+    const [editingCourseId, setEditingCourseId] = useState<number | null>( null );
     const [newCourse, setNewCourse] = useState( { title: "", description: "" } );
     const [isLoaded, setIsLoaded] = useState( false );
+
+    const [deleteTarget, setDeleteTarget] = useState<CourseItem | null>( null );
+    const [confirmInput, setConfirmInput] = useState( "" );
 
     /* =============================
        LOAD DATA DARI LOCALSTORAGE
@@ -43,17 +48,16 @@ export default function Course()
             console.error( "[Course] ❌ Failed to parse localStorage:", err );
         } finally
         {
-            setIsLoaded( true ); // ✅ tandai sudah selesai load
+            setIsLoaded( true );
         }
     }, [] );
 
     /* =============================
-       SIMPAN KE LOCALSTORAGE SETIAP PERUBAHAN
-       — hanya setelah data pertama kali dimuat
+       SIMPAN KE LOCALSTORAGE
     ============================= */
     useEffect( () =>
     {
-        if ( !isLoaded ) return; // ✅ hindari overwrite saat awal
+        if ( !isLoaded ) return;
         try
         {
             localStorage.setItem( STORAGE_KEY, JSON.stringify( courses ) );
@@ -65,26 +69,65 @@ export default function Course()
     }, [courses, isLoaded] );
 
     /* =============================
-       TAMBAH & HAPUS COURSE
+       TAMBAH / EDIT COURSE
     ============================= */
-    const handleAddCourse = () =>
+    const handleSaveCourse = () =>
     {
         if ( !newCourse.title.trim() ) return;
 
-        const newItem: CourseItem = {
-            id: Date.now(),
-            title: newCourse.title.trim(),
-            description: newCourse.description.trim(),
-        };
+        if ( editingCourseId )
+        {
+            // ✏️ Edit
+            setCourses( ( prev ) =>
+                prev.map( ( c ) =>
+                    c.id === editingCourseId
+                        ? { ...c, title: newCourse.title.trim(), description: newCourse.description.trim() }
+                        : c
+                )
+            );
+            setEditingCourseId( null );
+        } else
+        {
+            // ➕ Tambah
+            const newItem: CourseItem = {
+                id: Date.now(),
+                title: newCourse.title.trim(),
+                description: newCourse.description.trim(),
+            };
+            setCourses( ( prev ) => [...prev, newItem] );
+        }
 
-        setCourses( ( prev ) => [...prev, newItem] );
         setNewCourse( { title: "", description: "" } );
         setIsModalOpen( false );
     };
 
+    /* =============================
+       HAPUS COURSE (PAKAI MODAL)
+    ============================= */
     const handleDeleteCourse = ( id: number ) =>
     {
-        setCourses( ( prev ) => prev.filter( ( c ) => c.id !== id ) );
+        const target = courses.find( ( c ) => c.id === id );
+        if ( !target ) return;
+        setDeleteTarget( target );
+        setConfirmInput( "" );
+    };
+
+    const confirmDelete = () =>
+    {
+        if ( !deleteTarget ) return;
+        setCourses( ( prev ) => prev.filter( ( c ) => c.id !== deleteTarget.id ) );
+        setDeleteTarget( null );
+        setConfirmInput( "" );
+    };
+
+    /* =============================
+       EDIT COURSE
+    ============================= */
+    const handleEditCourse = ( course: CourseItem ) =>
+    {
+        setEditingCourseId( course.id );
+        setNewCourse( { title: course.title, description: course.description } );
+        setIsModalOpen( true );
     };
 
     /* =============================
@@ -94,7 +137,12 @@ export default function Course()
         <Frame
             floatingButton={
                 <AddButton
-                    onClick={ () => setIsModalOpen( true ) }
+                    onClick={ () =>
+                    {
+                        setEditingCourseId( null );
+                        setNewCourse( { title: "", description: "" } );
+                        setIsModalOpen( true );
+                    } }
                     title="Tambah Course"
                     icon={ <Plus size={ 24 } /> }
                 />
@@ -106,15 +154,31 @@ export default function Course()
           flex flex-col items-start justify-start gap-8 mt-8 mb-10
         "
             >
-                <CourseList courses={ courses } onDelete={ handleDeleteCourse } />
+                <CourseList
+                    courses={ courses }
+                    onDelete={ handleDeleteCourse }
+                    onEdit={ handleEditCourse }
+                />
             </div>
 
+            {/* Modal tambah/edit */ }
             <CourseModal
                 isOpen={ isModalOpen }
                 onClose={ () => setIsModalOpen( false ) }
-                onSave={ handleAddCourse }
+                onSave={ handleSaveCourse }
                 newCourse={ newCourse }
                 setNewCourse={ setNewCourse }
+            />
+
+            {/* Modal konfirmasi hapus */ }
+            <DeleteConfirmModal
+                open={ !!deleteTarget }
+                itemName={ deleteTarget?.title || "" }
+                itemType="course"
+                confirmInput={ confirmInput }
+                setConfirmInput={ setConfirmInput }
+                onClose={ () => setDeleteTarget( null ) }
+                onConfirm={ confirmDelete }
             />
         </Frame>
     );

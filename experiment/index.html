@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Live HTML Preview</title>
+  <style>
+    :root{
+      --bg:#0f1724;
+      --card:#0b1220;
+      --muted:#9aa8b3;
+      --accent:#7c3aed;
+      --glass: rgba(255,255,255,0.03);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;}
+    body{
+      margin:0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: linear-gradient(180deg,#071124 0%, #081426 100%);
+      color:#e6eef6;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      padding:18px;
+    }
+
+    header{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      margin-bottom:12px;
+    }
+    header h1{
+      font-size:18px;
+      margin:0;
+    }
+    header p { margin:0; color:var(--muted); font-size:13px; }
+
+    .container{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+      height: calc(100vh - 120px);
+    }
+
+    /* left card */
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border:1px solid rgba(255,255,255,0.04);
+      border-radius:12px;
+      padding:12px;
+      display:flex;
+      flex-direction:column;
+      min-height:0;
+      box-shadow: 0 6px 18px rgba(2,6,23,0.5);
+    }
+
+    .toolbar{
+      display:flex;
+      gap:8px;
+      align-items:center;
+      margin-bottom:8px;
+      flex-wrap:wrap;
+    }
+    .btn{
+      background:var(--glass);
+      border:1px solid rgba(255,255,255,0.04);
+      color:var(--muted);
+      padding:6px 10px;
+      border-radius:8px;
+      cursor:pointer;
+      font-size:13px;
+    }
+    .btn.primary{
+      background: linear-gradient(90deg,var(--accent), #4f46e5);
+      color:white;
+      border:none;
+    }
+    .btn.ghost{
+      background:transparent;
+      border:1px dashed rgba(255,255,255,0.04);
+    }
+    .btn:active{transform:translateY(1px)}
+
+    label.switch{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      font-size:13px;
+      color:var(--muted);
+    }
+    input[type="checkbox"]{ transform: scale(1.1); }
+
+    textarea#editor{
+      flex:1;
+      width:100%;
+      min-height:0;
+      resize:none;
+      border-radius:8px;
+      padding:12px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace;
+      font-size:13px;
+      color:#dbeafe;
+      background:rgba(0,0,0,0.25);
+      border:1px solid rgba(255,255,255,0.03);
+      outline:none;
+    }
+
+    /* right card: preview */
+    .preview-toolbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:8px;
+      margin-bottom:8px;
+    }
+    .frame-wrap{
+      flex:1;
+      border-radius:8px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,0.04);
+      background:#fff;
+    }
+    iframe#preview{
+      width:100%;
+      height:100%;
+      border:0;
+      display:block;
+    }
+
+    footer{
+      margin-top:12px;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    /* responsive */
+    @media (max-width:900px){
+      .container{ grid-template-columns: 1fr; height: calc(100vh - 220px); }
+      header{ flex-direction:column; align-items:flex-start; gap:6px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>Live HTML Preview</h1>
+      <p>Masukkan HTML di kiri — hasilnya tampil langsung di kanan. (Script diblokir demi keamanan.)</p>
+    </div>
+  </header>
+
+  <div class="container">
+    <!-- editor -->
+    <section class="card" aria-labelledby="editor-label">
+      <div class="toolbar" role="toolbar" aria-label="Editor controls">
+        <button id="runBtn" class="btn primary" title="Render sekarang">Render</button>
+        <button id="sampleBtn" class="btn" title="Isi contoh HTML">Contoh</button>
+        <button id="clearBtn" class="btn ghost" title="Bersihkan editor">Bersihkan</button>
+        <button id="downloadBtn" class="btn" title="Download sebagai file .html">Download</button>
+
+        <label class="switch" title="Preview otomatis">
+          <input id="autoToggle" type="checkbox" checked />
+          Auto-preview
+        </label>
+
+        <span style="margin-left:auto; color:var(--muted); font-size:13px">
+          Penyimpanan lokal: <strong id="saveStatus">aktif</strong>
+        </span>
+      </div>
+
+      <textarea id="editor" spellcheck="false" aria-label="Editor HTML"></textarea>
+    </section>
+
+    <!-- preview -->
+    <section class="card">
+      <div class="preview-toolbar">
+        <div>
+          <strong>Preview</strong>
+          <div style="font-size:12px; color:var(--muted)">Sandboxed (CSS & markup tampil, JavaScript diblokir)</div>
+        </div>
+        <div style="display:flex; gap:8px; align-items:center">
+          <button id="openNewBtn" class="btn" title="Buka preview di jendela baru (tanpa sandbox)">Open in new tab</button>
+          <button id="downloadPreviewBtn" class="btn" title="Download preview as HTML">Download preview</button>
+        </div>
+      </div>
+
+      <div class="frame-wrap" role="region" aria-label="Live preview">
+        <!-- sandbox tanpa allow-scripts => script tidak jalan -->
+        <iframe id="preview" sandbox="allow-same-origin"></iframe>
+      </div>
+    </section>
+  </div>
+
+  <footer>
+    Tip: untuk menampilkan JavaScript juga, hapus `sandbox="allow-same-origin"` pada iframe — tapi ini berisiko jika Anda membuka HTML dari sumber tak dipercaya.
+  </footer>
+
+  <script>
+    // Elemen
+    const editor = document.getElementById('editor');
+    const preview = document.getElementById('preview');
+    const runBtn = document.getElementById('runBtn');
+    const sampleBtn = document.getElementById('sampleBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const openNewBtn = document.getElementById('openNewBtn');
+    const downloadPreviewBtn = document.getElementById('downloadPreviewBtn');
+    const autoToggle = document.getElementById('autoToggle');
+    const saveStatus = document.getElementById('saveStatus');
+
+    const STORAGE_KEY = 'live-html-preview-content-v1';
+
+    // Debounce helper
+    function debounce(fn, ms){
+      let t;
+      return (...args) => {
+        clearTimeout(t);
+        t = setTimeout(()=>fn(...args), ms);
+      };
+    }
+
+    // Render ke iframe
+    function renderPreview(html){
+      // Use srcdoc if available, but for consistent sandbox + same-origin behaviour we set srcdoc.
+      // Note: scripts are blocked because iframe has no "allow-scripts".
+      preview.srcdoc = html;
+    }
+
+    // Save/load localStorage
+    function saveToStorage(v){
+      try{
+        localStorage.setItem(STORAGE_KEY, v);
+        saveStatus.textContent = 'aktif';
+      }catch(e){
+        saveStatus.textContent = 'gagal';
+      }
+    }
+    function loadFromStorage(){
+      try{
+        return localStorage.getItem(STORAGE_KEY) || '';
+      }catch(e){
+        return '';
+      }
+    }
+
+    // Simple download utility
+    function downloadFile(filename, content){
+      const blob = new Blob([content], {type: 'text/html;charset=utf-8'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    // Initial content (sample)
+    const sampleHTML = `<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Contoh</title>
+    <style>
+      body{ font-family: system-ui, -apple-system; padding:30px; color:#0b1220; }
+      .card{ background: #f3f4f6; padding:20px; border-radius:8px; box-shadow: 0 4px 20px rgba(2,6,23,0.08) }
+      button{ padding:8px 12px; border-radius:6px; border:none; background:#7c3aed; color:white; }
+    </style>
+  </head>
+  <body>
+    <h1>Hallo — ini contoh HTML</h1>
+    <div class="card">
+      <p>CSS akan bekerja. JavaScript <strong>tidak</strong> dijalankan di preview ini (sandboxed).</p>
+      <p>Coba edit HTML di panel kiri dan tekan <em>Render</em> atau aktifkan Auto-preview.</p>
+      <button onclick="alert('Script tidak jalan di preview yang disandbox')">Click saya</button>
+    </div>
+  </body>
+</html>`;
+
+    // Load saved or sample
+    const saved = loadFromStorage();
+    if(saved && saved.trim().length > 0){
+      editor.value = saved;
+    } else {
+      editor.value = sampleHTML;
+      saveToStorage(editor.value);
+    }
+
+    // Auto render debounced
+    const debouncedRender = debounce(()=>{
+      renderPreview(editor.value);
+      if(saveStatus) saveToStorage(editor.value);
+    }, 300);
+
+    // Initial render
+    renderPreview(editor.value);
+
+    // Events
+    editor.addEventListener('input', () => {
+      if(autoToggle.checked) debouncedRender();
+    });
+
+    runBtn.addEventListener('click', () => {
+      renderPreview(editor.value);
+      saveToStorage(editor.value);
+    });
+
+    sampleBtn.addEventListener('click', () => {
+      if(!confirm('Ganti isi editor dengan contoh? Isi yang sekarang akan hilang kecuali sudah tersimpan.')) return;
+      editor.value = sampleHTML;
+      renderPreview(editor.value);
+      saveToStorage(editor.value);
+    });
+
+    clearBtn.addEventListener('click', () => {
+      if(!confirm('Kosongkan isi editor?')) return;
+      editor.value = '';
+      renderPreview(editor.value);
+      saveToStorage(editor.value);
+    });
+
+    downloadBtn.addEventListener('click', () => {
+      downloadFile('page.html', editor.value);
+    });
+
+    downloadPreviewBtn.addEventListener('click', () => {
+      // Download what is currently in preview (same as editor for this app)
+      downloadFile('preview.html', preview.srcdoc || editor.value);
+    });
+
+    openNewBtn.addEventListener('click', () => {
+      // open in new tab — note: this will not be sandboxed by this app; browser may restrict data URLs
+      const w = window.open();
+      if(!w) {
+        alert('Popup tertahan. Izinkan popup atau gunakan "Download" jika mau membuka di tab baru.');
+        return;
+      }
+      // write content into new window
+      w.document.open();
+      w.document.write(editor.value);
+      w.document.close();
+    });
+
+    // Keyboard shortcut: Ctrl/Cmd + Enter to run
+    window.addEventListener('keydown', (ev) => {
+      if((ev.ctrlKey || ev.metaKey) && ev.key === 'Enter'){
+        ev.preventDefault();
+        renderPreview(editor.value);
+        saveToStorage(editor.value);
+      }
+    });
+
+    // Save periodically (every 5s) in case user closes tab
+    setInterval(() => {
+      try {
+        saveToStorage(editor.value);
+      } catch(e) {}
+    }, 5000);
+
+    // Accessibility: focus editor on load
+    editor.focus();
+    editor.setSelectionRange(editor.value.length, editor.value.length);
+
+    // Notes about security (shown as console message)
+    console.log("Live HTML Preview\n- Preview sandboxed: inline JavaScript won't run. Remove sandbox attribute if you intentionally want to run scripts (not recommended for untrusted content).");
+  </script>
+</body>
+</html>

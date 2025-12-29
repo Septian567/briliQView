@@ -34,7 +34,7 @@ export default function SignupButton( { variant = "desktop", onClick }: SignupBu
     return (
         <button
             onClick={ handleClick }
-            className="text-sm font-medium bg-yellow-400 hover:bg-yellow-500 text-black px-4 py-1 rounded transition-colors"
+            className="text-m font-medium bg-yellow-400 hover:bg-yellow-500 text-black px-4 py-1 rounded transition-colors"
         >
             SignUp
         </button>

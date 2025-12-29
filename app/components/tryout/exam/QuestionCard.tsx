@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React from "react";
 import { motion } from "framer-motion";
+import { useQuestionShortcut } from "../../../hooks/tryout/useQuestionShortcut";
 
 interface QuestionCardProps
 {
@@ -16,36 +17,12 @@ export default function QuestionCard( {
     onSelect,
 }: QuestionCardProps )
 {
-    if ( !question ) return null;
+    // ✅ Hook harus selalu dipanggil di atas, tidak boleh di dalam kondisi
+    useQuestionShortcut( onSelect, Boolean( question ) );
+
+    if ( !question ) return null; // ⬅️ Kondisi boleh di sini, setelah hook
 
     const options = ["A", "B", "C", "D"];
-
-    // Mapping shortcut keys ke jawaban
-    const shortcutMap: Record<string, string> = {
-        t: "A",
-        y: "B",
-        u: "C",
-        i: "D",
-    };
-
-    useEffect( () =>
-    {
-        const handleKeyDown = ( e: KeyboardEvent ) =>
-        {
-            const key = e.key.toLowerCase();
-            if ( shortcutMap[key] )
-            {
-                onSelect( shortcutMap[key] );
-            }
-        };
-
-        window.addEventListener( "keydown", handleKeyDown );
-
-        return () =>
-        {
-            window.removeEventListener( "keydown", handleKeyDown );
-        };
-    }, [onSelect] );
 
     return (
         <motion.div
@@ -65,17 +42,17 @@ export default function QuestionCard( {
 
                     return (
                         <div key={ opt } className="flex items-start gap-2">
-                            {/* Bulat radio button */ }
                             <button
                                 onClick={ () => onSelect( opt ) }
-                                className={ `w-6 h-6 flex-shrink-0 rounded-full border-2 border-gray-400 flex items-center justify-center transition ${ isSelected ? "bg-yellow-400 border-yellow-500" : "bg-white"
+                                className={ `w-6 h-6 flex-shrink-0 rounded-full border-2 border-gray-400 flex items-center justify-center transition ${ isSelected
+                                        ? "bg-yellow-400 border-yellow-500"
+                                        : "bg-white"
                                     }` }
                                 aria-label={ `Pilih jawaban ${ opt }` }
                             >
                                 { isSelected && <div className="w-3 h-3 rounded-full bg-black" /> }
                             </button>
 
-                            {/* Keterangan jawaban */ }
                             <span className="text-gray-800">{ question[`Option ${ opt }`] }</span>
                         </div>
                     );

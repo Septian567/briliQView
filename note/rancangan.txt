@@ -1,0 +1,2 @@
+buat html yang menampilkan teks dan gambar
+cari tahu bagaimana cara membuatnya dengan form

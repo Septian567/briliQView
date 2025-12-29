@@ -1,35 +1,49 @@
 "use client";
 
-import { useParams, useRouter } from "next/navigation";
+import React, { useState } from "react";
+import { useParams } from "next/navigation";
+import CourseHeader from "../../components/course/CourseHeader";
+import CourseView from "../../components/course/view/CourseView";
+import CourseActions from "../../components/course/actions/CourseActions";
 
 export default function CourseDetail()
 {
     const { id } = useParams();
-    const router = useRouter();
+    const [activeMenu, setActiveMenu] = useState<"view" | "actions">( "view" );
+    const [showHeader, setShowHeader] = useState( true );
 
     return (
-        <div className="p-8 max-w-3xl mx-auto">
-            <button
-                onClick={ () => router.back() }
-                className="mb-6 px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-sm">
-                ← Kembali
-            </button>
+        <div className="min-h-screen bg-gray-50 flex flex-col">
+            {/* Header */ }
+            { showHeader && (
+                <CourseHeader activeMenu={ activeMenu } setActiveMenu={ setActiveMenu } />
+            ) }
 
-            <h1 className="text-3xl font-bold text-gray-800 mb-4">
-                Detail Course #{ id }
-            </h1>
-
-            <div className="bg-white shadow-md rounded-xl p-6">
-                <p className="text-gray-700 mb-2">
-                    Ini adalah halaman detil untuk course dengan ID: <b>{ id }</b>
-                </p>
-                <p className="text-gray-600">
-                    kamu bisa menambahkan informasi lengkap tentang course ini disini seperti materi, instruktur, atau jadwal.
-
-                </p>
-            </div>
-
-
+            {/* MAIN CONTENT */ }
+            <main
+                className="
+                    flex-1 
+                    w-full 
+                    max-w-screen-xl 
+                    mx-auto 
+                    px-4 
+                    sm:px-6 
+                    md:px-8 
+                    lg:px-12 
+                    xl:px-16 
+                    mt-6 
+                    sm:mt-8 
+                    mb-10
+                "
+            >
+                { activeMenu === "view" && <CourseView id={ id } /> }
+                { activeMenu === "actions" && (
+                    <CourseActions
+                        showHeader={ showHeader }
+                        setShowHeader={ setShowHeader }
+                    />
+                ) }
+            </main>
         </div>
-    )
+    );
 }
